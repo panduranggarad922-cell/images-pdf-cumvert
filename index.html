@@ -145,6 +145,55 @@ textarea {
   height: 20px;
   background: lime;
 }
+ #menuBtn {
+  position: fixed;
+  top: 15px;
+  right: 15px;
+  font-size: 28px;
+  color: white;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  z-index: 1000;
+}
+
+#menuBox {
+  position: fixed;
+  top: 60px;
+  right: 15px;
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 1000;
+}
+
+#menuBox button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(45deg, rgb(236, 9, 24), pink);
+  color: white;
+  cursor: pointer;
+}
+.blog-section {
+  max-width: 800px;
+  margin: auto;
+  font-family: Arial, sans-serif;
+}
+
+.blog-section h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.blog-section h2 {
+  color: #333;
+  margin-top: 20px;
+}
+
+.blog-section p {
+  color: #555;
+}
 </style>
 </head>
 
@@ -154,6 +203,32 @@ textarea {
 
 <!-- PAGE 1 -->
 <div id="page1" class="page active">
+   <!-- ☰ Menu Button -->
+ <div id="menuBtn" onclick="toggleMenu()">☰</div>
+
+<!-- Dropdown Menu -->
+<div id="menuBox">
+  <button onclick="openAbout()">About</button>
+  <button onclick="openBlog()">Articles & Blogs</button>
+</div>
+
+</style>
+</head>
+
+<body>
+
+<div class="header">Programming Language Coding, Typing Test</div>
+
+<!-- PAGE 1 -->
+<div id="page1" class="page active">
+  <!-- ☰ Menu Button -->
+<div id="menuBtn" onclick="toggleMenu()">☰</div>
+
+<!-- Dropdown Menu -->
+<div id="menuBox">
+  <button onclick="openAbout()">About</button>
+  <button onclick="openBlog()">Articles & Blogs</button>
+</div>
 <h3>Select Language</h3>
  <div style="text-align:center; margin-top:40px;">  <!-- 🔧 yaha se pura block move hoga -->
 
@@ -163,16 +238,7 @@ textarea {
   </div>
 
 </div>
- <button 
-  onclick="window.location.href='about.html'"
-  style="
-    position: fixed;
-    top: 120px;
-    right: 15px;
-    padding: 8px 15px;
-    border-radius: 8px;
-  ">About
-</button>
+ 
 <div class="grid" id="languages"></div>
    <div style="text-align:center; font-size:12px; margin-top:80px;">
   <!-- 🔧 yahi value change karke niche le ja sakte ho -->
@@ -497,7 +563,17 @@ function restart(){
 function goBack(p){
   showPage(p);
 }
+function toggleMenu() {
+  let menu = document.getElementById("menuBox");
+  menu.style.display = (menu.style.display === "flex") ? "none" : "flex";
+}
 
+function openBlog() {
+  window.location.href = "blog.html";
+}
+function openAbout() {
+  window.location.href = "about.html";
+}
 </script>
 
 
