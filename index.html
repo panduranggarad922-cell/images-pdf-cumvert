@@ -2,17 +2,7 @@
 <html lang="en">
 <head>
 
- <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-X2762V9CYW"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-X2762V9CYW');
-</script>
- 
- <meta charset="UTF-8">
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- 🔥 TITLE (Most Important) -->
@@ -42,7 +32,6 @@
 <meta property="og:description" content="Check your typing speed and improve it.">
 <meta property="og:image" content="https://panduranggarad922-cell.github.io/Code-Typing-Speed-Test-App/bgnm.jpg">
 <meta property="og:url" content="https://panduranggarad922-cell.github.io/Code-Typing-Speed-Test-App/">
-
 
 <style>
 body {
@@ -145,7 +134,7 @@ textarea {
   height: 20px;
   background: lime;
 }
- #menuBtn {
+#menuBtn {
   position: fixed;
   top: 15px;
   right: 15px;
@@ -203,24 +192,6 @@ textarea {
 
 <!-- PAGE 1 -->
 <div id="page1" class="page active">
-   <!-- ☰ Menu Button -->
- <div id="menuBtn" onclick="toggleMenu()">☰</div>
-
-<!-- Dropdown Menu -->
-<div id="menuBox">
-  <button onclick="openAbout()">About</button>
-  <button onclick="openBlog()">Articles & Blogs</button>
-</div>
-
-</style>
-</head>
-
-<body>
-
-<div class="header">Programming Language Coding, Typing Test</div>
-
-<!-- PAGE 1 -->
-<div id="page1" class="page active">
   <!-- ☰ Menu Button -->
 <div id="menuBtn" onclick="toggleMenu()">☰</div>
 
@@ -230,7 +201,8 @@ textarea {
   <button onclick="openBlog()">Articles & Blogs</button>
 </div>
 <h3>Select Language</h3>
- <div style="text-align:center; margin-top:40px;">  <!-- 🔧 yaha se pura block move hoga -->
+
+<div style="text-align:center; margin-top:40px;">  <!-- 🔧 yaha se pura block move hoga -->
 
   <!-- Buttons section (tumhara existing buttons code yaha rahega) -->
   <div id="buttons-section">
@@ -238,16 +210,16 @@ textarea {
   </div>
 
 </div>
- 
+
 <div class="grid" id="languages"></div>
-   <div style="text-align:center; font-size:12px; margin-top:80px;">
+  <div style="text-align:center; font-size:12px; margin-top:80px;">
   <!-- 🔧 yahi value change karke niche le ja sakte ho -->
 
      <a href="terms.html" style="color:white; margin:0 10px; opacity:0.7; text-decoration:none;">Terms & Conditions</a>
      <a href="privacy.html" style="color:white; margin:0 10px; opacity:0.7; text-decoration:none;">Privacy Policy</a>
      <a href="contact.html" style="color:white; margin:0 10px; opacity:0.7; text-decoration:none;">Contact</a>
   </div>
-   <h2>Welcome to Typing Speed Test</h2>
+  <h2>Welcome to Typing Speed Test</h2>
 <p>This website helps you improve your typing speed and accuracy.
 Practice daily with different programming languages and track your performance.</p>
 <p>Welcome to our Programming Typing Speed Test website. This platform is specially designed 
@@ -296,7 +268,7 @@ to the next level.</p>
 <button onclick="goBack(1)" style="position:absolute; top:15px; left:15px;">
   Back
 </button>
- <h1>How to Improve Typing Speed</h1>
+<h1>How to Improve Typing Speed</h1>
 
 <p>Improving typing speed requires daily practice and focus.
 Start by practicing slowly and accurately, then gradually increase your speed.</p>
@@ -355,6 +327,7 @@ Consistency is the key to becoming a fast typist.</p>
 <p>Using the correct keyboard and comfortable setup can also improve your typing performance.</p>
 
 <p>In conclusion, improving typing speed requires practice, patience, and consistency. By following the right techniques and practicing daily, anyone can become a fast and accurate typist.</p>
+
 </div>
 
 <!-- PAGE 3 -->
@@ -563,6 +536,7 @@ function restart(){
 function goBack(p){
   showPage(p);
 }
+
 function toggleMenu() {
   let menu = document.getElementById("menuBox");
   menu.style.display = (menu.style.display === "flex") ? "none" : "flex";
@@ -574,6 +548,7 @@ function openBlog() {
 function openAbout() {
   window.location.href = "about.html";
 }
+
 </script>
 
 
