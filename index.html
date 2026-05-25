@@ -265,9 +265,34 @@ to the next level.</p>
 <div id="page2" class="page">
 <span id="langTitle"></span>
 <div class="grid" id="projects"></div>
-<button onclick="goBack(1)" style="position:absolute; top:15px; left:15px;">
+<button onclick="goBack(1)" class="back-btn">
   Back
 </button>
+
+<style>
+.back-btn {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+
+  padding: 10px 18px;
+  font-size: 16px;
+  color: white;
+
+  background: rgba(255, 255, 255, 0.1); /* transparent */
+  border: 1px solid rgba(255, 255, 255, 0.3);
+
+  border-radius: 12px;
+  backdrop-filter: none; 
+
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.back-btn:hover {
+  background: none;
+}
+</style>
 <h1>How to Improve Typing Speed</h1>
 
 <p>Improving typing speed requires daily practice and focus.
@@ -343,9 +368,34 @@ End Exam
 
 <div class="code-box" id="code"></div>
 
-<button onclick="goBack(2)" style="position:absolute; top:15px; left:15px;">
+<button onclick="goBack(1)" class="back-btn">
   Back
 </button>
+
+<style>
+.back-btn {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+
+  padding: 10px 18px;
+  font-size: 16px;
+  color: white;
+
+  background: rgba(255, 255, 255, 0.1); /* transparent */
+  border: 1px solid rgba(255, 255, 255, 0.3);
+
+  border-radius: 12px;
+  backdrop-filter: none; 
+
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.back-btn:hover {
+  background: none;
+}
+</style>
 
 <textarea id="typing" oninput="highlightText()"></textarea>
 </div>
