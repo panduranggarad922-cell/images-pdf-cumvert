@@ -421,6 +421,90 @@ End Exam
 
 <button onclick="restart()">Restart</button>
 <button onclick="goBack(2)">Back</button>
+
+  <script>
+
+const paragraphs = [
+"Coding typing speed is an important skill for every developer who wants to work efficiently and save time during programming tasks.",
+"Many beginners focus only on learning syntax, but typing speed plays a big role in real-world coding productivity.",
+"The faster and more accurately you type, the more smoothly you can convert your ideas into working code.",
+"This website is specially designed to help you practice coding-based typing instead of normal English typing.",
+"Unlike traditional typing tests, this platform gives you real coding snippets to improve practical speed.",
+"Practicing daily for just 10 to 15 minutes can significantly improve your typing speed over time.",
+"Consistency matters more than intensity, so regular practice is the key to success.",
+"Focus on accuracy first instead of speed, because speed automatically increases with accuracy.",
+"Making fewer mistakes helps you write cleaner and more efficient code.",
+"Always try to use proper finger placement on the keyboard to increase efficiency.",
+"Avoid looking at the keyboard while typing, as it slows down your learning process.",
+"Touch typing is one of the best skills you can develop as a programmer.",
+"Practicing coding syntax repeatedly helps build muscle memory.",
+"This muscle memory allows you to type common code structures without thinking.",
+"Start with simple code and gradually move to more complex coding challenges.",
+"Do not rush during practice sessions, because rushing leads to more errors.",
+"Use this site regularly to track your typing speed progress and improvements.",
+"Try to beat your previous score every time you take a test.",
+"Healthy competition with yourself is the best way to stay motivated.",
+"Typing speed tests on this site simulate real coding environments.",
+"This helps you prepare for exams, interviews, and real development work.",
+"Faster typing reduces development time and increases overall productivity.",
+"It also helps you stay focused on logic instead of struggling with typing.",
+"Good typing speed makes debugging faster and easier.",
+"Developers with fast typing speed often perform better under time pressure.",
+"Try to maintain proper posture while practicing typing.",
+"Keep your back straight and your hands relaxed.",
+"A comfortable setup helps you practice for longer durations.",
+"Take short breaks between long practice sessions.",
+"Over-practicing without breaks can lead to fatigue and reduced performance.",
+"Use this website as a daily training tool for coding improvement.",
+"The more you practice here, the more confident you will become.",
+"Confidence is important while coding, especially during exams.",
+"This platform is useful for students, beginners, and experienced programmers.",
+"Everyone can benefit from improving their typing speed.",
+"Remember that improvement takes time, so stay patient.",
+"Small daily improvements lead to big long-term results.",
+"Typing speed is not just about speed, but also about control and precision.",
+"Use this website to build both speed and accuracy together.",
+"Keep practicing, keep improving, and become a faster and smarter coder."
+];
+
+let container = document.getElementById("typingGuide");
+
+let paraIndex = 0;
+let charIndex = 0;
+function typeParagraph() {
+
+  if (paraIndex >= paragraphs.length) return;
+
+  let text = paragraphs[paraIndex];
+
+  // ✅ Har paragraph ke liye naya <p>
+  let p = document.createElement("p");
+  container.appendChild(p);
+
+  function typeChar() {
+    if (charIndex < text.length) {
+      p.innerHTML += text.charAt(charIndex);
+      charIndex++;
+      setTimeout(typeChar, 10);
+    } else {
+      paraIndex++;
+      charIndex = 0;
+      setTimeout(typeParagraph, 400); // next paragraph
+    }
+  }
+
+  typeChar();
+}
+
+// 🔥 Start typing when result page open
+function startTypingEffect(){
+  container.innerHTML = "";
+  paraIndex = 0;
+  charIndex = 0;
+  typeParagraph();
+}
+
+</script>
 </div>
 
 <script>
@@ -575,6 +659,7 @@ function finishTest(){
   }
 
   showPage(4);
+  startTypingEffect();
 }
 
 // Restart
