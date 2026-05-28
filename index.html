@@ -421,7 +421,11 @@ End Exam
 
 <button onclick="restart()">Restart</button>
 <button onclick="goBack(2)">Back</button>
-
+  
+<section class="typing-guide">
+  <h2 id="typingTitle">How to Improve Your Coding Typing Speed</h2>
+  <div id="typingGuide"></div>
+</section>
   <script>
 
 const paragraphs = [
@@ -498,9 +502,12 @@ function typeParagraph() {
 
 // 🔥 Start typing when result page open
 function startTypingEffect(){
-  container.innerHTML = "";
+  let container = document.getElementById("typingGuide");
+
+  container.innerHTML = ""; // sirf paragraphs clear honge
   paraIndex = 0;
   charIndex = 0;
+
   typeParagraph();
 }
 
