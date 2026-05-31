@@ -273,11 +273,24 @@ function typeFirstPage() {
       firstChar++;
       setTimeout(typeChar, 2);
     } else {
-      firstIndex++;
-      firstChar = 0;
-      setTimeout(typeFirstPage, 400);
-    }
+  // Paragraph complete
+   if (firstIndex === 1) {
+    let img = document.createElement("img");
+    img.src = "keybord.jpeg"; // apni image ka path
+    img.style.width = "100%";
+    img.style.margin = "20px 0";
+    img.style.borderRadius = "10px";
+
+    container.appendChild(img);
   }
+  firstIndex++;
+  firstChar = 0;
+  setTimeout(typeFirstPage, 400);
+}
+  }
+
+  typeChar();
+}
 
   typeChar();
 }
