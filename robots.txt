@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://panduranggarad922-cell.github.io/Code-Typing-Speed-Test-App/sitemap.xml
