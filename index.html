@@ -267,6 +267,7 @@ function typeFirstPage() {
   let p = document.createElement("p");
   container.appendChild(p);
 
+
   function typeChar() {
     if (firstChar < text.length) {
       p.innerHTML += text.charAt(firstChar);
@@ -274,7 +275,7 @@ function typeFirstPage() {
       setTimeout(typeChar, 2);
     } else {
   // Paragraph complete
-   if (firstIndex === 1) {
+   if (firstIndex === 1) {  //image move
     let img = document.createElement("img");
     img.src = "keybord.jpeg"; // apni image ka path
     img.style.width = "100%";
@@ -288,9 +289,6 @@ function typeFirstPage() {
   setTimeout(typeFirstPage, 400);
 }
   }
-
-  typeChar();
-}
 
   typeChar();
 }
