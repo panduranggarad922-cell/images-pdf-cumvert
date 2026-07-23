@@ -1304,43 +1304,43 @@ function removeImageFromPreview(idx) {
 
 async function generateAndSavePDF() {
   const { jsPDF } = window.jspdf;
-  let pdf = null;
+  // Standard A4 Size Page (210mm x 297mm)
+  const pdf = new jsPDF("p", "mm", "a4");
+  const pageWidth = 210;
+  const pageHeight = 297;
   
-  for (let i = 0; i < images.length; i++) {
+  for(let i = 0; i < images.length; i++) {
+    if (i > 0) pdf.addPage();
     const finalCompImg = await getCompositeImageUrl(i, 0.9);
     
-    // Image ki actual pixel width & height nikalne ke liye
+    // Image ki actual dimensions check karna
     const img = new Image();
     img.src = finalCompImg;
     await new Promise((resolve) => { img.onload = resolve; });
 
-    // Pixels ko mm me convert karna (1 px = 0.264583 mm)
-    const imgWidthMM = img.naturalWidth * 0.264583;
-    const imgHeightMM = img.naturalHeight * 0.264583;
-    
-    // Page ki orientation (Portrait ya Landscape) detect karna
-    const orientation = imgWidthMM > imgHeightMM ? 'l' : 'p';
+    const imgAspect = img.naturalWidth / img.naturalHeight;
+    const pageAspect = pageWidth / pageHeight;
 
-    if (i === 0) {
-      // Pehla page image ki exact width & height ke hisaab se banega
-      pdf = new jsPDF({
-        orientation: orientation,
-        unit: 'mm',
-        format: [imgWidthMM, imgHeightMM]
-      });
+    let drawWidth, drawHeight;
+
+    // Aspect ratio maintain karte hue max bounds calculate karna
+    if (imgAspect > pageAspect) {
+      drawWidth = pageWidth;
+      drawHeight = pageWidth / imgAspect;
     } else {
-      // Baaki pages ko unki apni image size ke hisaab se add karna
-      pdf.addPage([imgWidthMM, imgHeightMM], orientation);
+      drawHeight = pageHeight;
+      drawWidth = pageHeight * imgAspect;
     }
+
+    // Image ko A4 Page ke bilkul CENTER me place karna
+    const xOffset = (pageWidth - drawWidth) / 2;
+    const yOffset = (pageHeight - drawHeight) / 2;
     
-    // Image ko PDF page par exact same size me add karna
-    pdf.addImage(finalCompImg, "JPEG", 0, 0, imgWidthMM, imgHeightMM, undefined, 'FAST', 0);
+    pdf.addImage(finalCompImg, "JPEG", xOffset, yOffset, drawWidth, drawHeight, undefined, 'FAST', 0);
   }
   
   let name = document.getElementById("pdfName").value.trim() || "Pro_Document";
-  if (pdf) {
-    pdf.save(name + ".pdf");
-  }
+  pdf.save(name + ".pdf");
 }
 
 async function processPdfToImageConversion(e) {
