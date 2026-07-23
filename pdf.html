@@ -1354,7 +1354,26 @@ async function generateAndSavePDF() {
   }
   
   let name = document.getElementById("pdfName").value.trim() || "Pro_Document";
-  pdf.save(name + ".pdf");
+  const fileName = name + ".pdf";
+
+  // Mobile Chrome Download Compatibility Fix
+  try {
+    const pdfBlob = pdf.output('blob');
+    const blobUrl = URL.createObjectURL(pdfBlob);
+    
+    const link = document.createElement('a');
+    link.href = blobUrl;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    // Memory release karne ke liye timeout
+    setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
+  } catch(err) {
+    // Backup fallback method
+    pdf.save(fileName);
+  }
 }
 
 async function processPdfToImageConversion(e) {
