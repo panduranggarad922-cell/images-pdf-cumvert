@@ -1282,13 +1282,24 @@ function goToPDF() {
 async function renderPdfPreviewDeck() {
   const preview = document.getElementById("pdfPreview");
   preview.innerHTML = "";
+  
+  // High-memory pressure se bachne ke liye step-by-step rendering
   for(let idx = 0; idx < images.length; idx++) {
-    const src = await getCompositeImageUrl(idx, 0.7);
     const block = document.createElement("div");
     block.className = "preview-item-wrapper";
+    
+    // Default image source
+    let src = images[idx];
+    
+    // Agar layers active hain tabhi canvas composite banao
+    const set = imageSettings[idx];
+    if (set && ((set.textLayer && set.textLayer.active) || (set.pipLayer && set.pipLayer.active) || set.brightness || set.contrast || set.saturation || set.blur || (set.rawFilter && set.rawFilter !== 'none'))) {
+      src = await getCompositeImageUrl(idx, 0.5); // Preview light quality me generate karein
+    }
+
     block.innerHTML = `
       <button class="preview-delete-btn" onclick="removeImageFromPreview(${idx})">✕</button>
-      <img src="${src}">
+      <img src="${src}" loading="lazy">
     `;
     preview.appendChild(block);
   }
@@ -1304,39 +1315,42 @@ function removeImageFromPreview(idx) {
 
 async function generateAndSavePDF() {
   const { jsPDF } = window.jspdf;
-  // Standard A4 Size Page (210mm x 297mm)
   const pdf = new jsPDF("p", "mm", "a4");
   const pageWidth = 210;
   const pageHeight = 297;
+
+  const quality = Number(document.getElementById("compressSlider").value) / 100;
   
   for(let i = 0; i < images.length; i++) {
     if (i > 0) pdf.addPage();
-    const finalCompImg = await getCompositeImageUrl(i, 0.9);
     
-    // Image ki actual dimensions check karna
-    const img = new Image();
-    img.src = finalCompImg;
-    await new Promise((resolve) => { img.onload = resolve; });
-
-    const imgAspect = img.naturalWidth / img.naturalHeight;
-    const pageAspect = pageWidth / pageHeight;
-
-    let drawWidth, drawHeight;
-
-    // Aspect ratio maintain karte hue max bounds calculate karna
-    if (imgAspect > pageAspect) {
-      drawWidth = pageWidth;
-      drawHeight = pageWidth / imgAspect;
-    } else {
-      drawHeight = pageHeight;
-      drawWidth = pageHeight * imgAspect;
-    }
-
-    // Image ko A4 Page ke bilkul CENTER me place karna
-    const xOffset = (pageWidth - drawWidth) / 2;
-    const yOffset = (pageHeight - drawHeight) / 2;
+    // Composite Image Generate karna
+    const finalCompImg = await getCompositeImageUrl(i, quality);
     
-    pdf.addImage(finalCompImg, "JPEG", xOffset, yOffset, drawWidth, drawHeight, undefined, 'FAST', 0);
+    await new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+        const imgAspect = img.naturalWidth / img.naturalHeight;
+        const pageAspect = pageWidth / pageHeight;
+
+        let drawWidth, drawHeight;
+        if (imgAspect > pageAspect) {
+          drawWidth = pageWidth;
+          drawHeight = pageWidth / imgAspect;
+        } else {
+          drawHeight = pageHeight;
+          drawWidth = pageHeight * imgAspect;
+        }
+
+        const xOffset = (pageWidth - drawWidth) / 2;
+        const yOffset = (pageHeight - drawHeight) / 2;
+        
+        pdf.addImage(finalCompImg, "JPEG", xOffset, yOffset, drawWidth, drawHeight, undefined, 'FAST');
+        resolve();
+      };
+      img.onerror = resolve;
+      img.src = finalCompImg;
+    });
   }
   
   let name = document.getElementById("pdfName").value.trim() || "Pro_Document";
