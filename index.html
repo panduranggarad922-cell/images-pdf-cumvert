@@ -225,7 +225,24 @@ button span{
     height: 15px;
     right: 10px ;  /* yaha adjust karo */
     top: -1px;}}
-    
+
+      @media (max-width: 600px) {
+.img-box {flex-direction: column;}}
+.img-box {
+  width: 90%;
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 10px;
+  border-radius: 20px;
+  backdrop-filter: blur(15px);
+  background: rgba(255,255,255,0.1);
+  box-shadow: 0 0 20px rgba(0,0,0,0.5);
+}
+
+.img-box img {
+  width: 100%;
+  border-radius: 15px;
+}
 </style>
 </head>
 <body>
@@ -275,6 +292,10 @@ button span{
       ⭐  ⇄  x <br>
   </button>
 
+</div>
+       <!-- img-->
+  <div class="img-box">
+  <img src="home.jpeg" alt="Coding UI">
 </div>
      <a href="terms.html" style="color:white; margin:0 10px; opacity:0.7; text-decoration:none;">Terms & Conditions</a>
      <a href="privacy.html" style="color:white; margin:0 10px; opacity:0.7; text-decoration:none;">Privacy Policy</a>
