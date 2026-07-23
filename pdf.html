@@ -1304,16 +1304,43 @@ function removeImageFromPreview(idx) {
 
 async function generateAndSavePDF() {
   const { jsPDF } = window.jspdf;
-  const pdf = new jsPDF("p", "mm", "a4");
+  let pdf = null;
   
-  for(let i = 0; i < images.length; i++) {
-    if (i > 0) pdf.addPage();
+  for (let i = 0; i < images.length; i++) {
     const finalCompImg = await getCompositeImageUrl(i, 0.9);
-    pdf.addImage(finalCompImg, "JPEG", 0, 0, 210, 297, undefined, 'FAST', 0);
+    
+    // Image ki actual pixel width & height nikalne ke liye
+    const img = new Image();
+    img.src = finalCompImg;
+    await new Promise((resolve) => { img.onload = resolve; });
+
+    // Pixels ko mm me convert karna (1 px = 0.264583 mm)
+    const imgWidthMM = img.naturalWidth * 0.264583;
+    const imgHeightMM = img.naturalHeight * 0.264583;
+    
+    // Page ki orientation (Portrait ya Landscape) detect karna
+    const orientation = imgWidthMM > imgHeightMM ? 'l' : 'p';
+
+    if (i === 0) {
+      // Pehla page image ki exact width & height ke hisaab se banega
+      pdf = new jsPDF({
+        orientation: orientation,
+        unit: 'mm',
+        format: [imgWidthMM, imgHeightMM]
+      });
+    } else {
+      // Baaki pages ko unki apni image size ke hisaab se add karna
+      pdf.addPage([imgWidthMM, imgHeightMM], orientation);
+    }
+    
+    // Image ko PDF page par exact same size me add karna
+    pdf.addImage(finalCompImg, "JPEG", 0, 0, imgWidthMM, imgHeightMM, undefined, 'FAST', 0);
   }
   
   let name = document.getElementById("pdfName").value.trim() || "Pro_Document";
-  pdf.save(name + ".pdf");
+  if (pdf) {
+    pdf.save(name + ".pdf");
+  }
 }
 
 async function processPdfToImageConversion(e) {
