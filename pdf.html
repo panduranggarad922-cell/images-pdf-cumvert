@@ -374,7 +374,7 @@ body {
   background: #27272a;
   border: 1px solid #3f3f46;
   color: white;
-  padding: 8px 12px;
+  padding: 8px 9px;
   border-radius: 8px;
   font-size: 16px;
 }
@@ -498,11 +498,11 @@ body {
   <div id="editPanel" class="edit-panel">
 
     <div id="adjustPanel" class="sub-panel">
+      <button onclick="bakeAdvancedEffects()" style="background:#00ffcc; color:black; border-radius:8px; padding:4px 10px; font-weight:bold;">Apply</button>
       <div class="slider-group"><label>Brightness</label><input type="range" id="brightRange" min="-50" max="50" value="0" oninput="updateFilters()"></div>
       <div class="slider-group"><label>Contrast</label><input type="range" id="contrastRange" min="-50" max="50" value="0" oninput="updateFilters()"></div>
       <div class="slider-group"><label>Saturation</label><input type="range" id="satRange" min="-50" max="50" value="0" oninput="updateFilters()"></div>
       <div class="slider-group"><label>Blur</label><input type="range" id="blurRange" min="0" max="10" value="0" oninput="updateFilters()"></div>
-      <button onclick="bakeAdvancedEffects()" style="background:#00ffcc; color:black; border-radius:8px; padding:6px 12px; font-weight:bold;">Apply</button>
     </div>
 
     <div id="filterPanel" class="sub-panel">
@@ -514,14 +514,14 @@ body {
     </div>
 
     <div id="textPanel" class="sub-panel">
-      <input type="text" id="overlayText" placeholder="Type text or Emoji 😎" class="text-input-field">
-      <button onclick="spawnMovableText()" style="background:#00ffcc; color:black; padding:8px 14px; border-radius:8px; font-weight:bold;">Place</button>
-      <button onclick="burnLayerToImage('text')" style="background:#ffcc00; color:black; padding:8px 14px; border-radius:8px; font-weight:bold;">✔Save</button>
-      <button onclick="deleteLayer('text')" style="background:rgba(255,0,85,0.2); color:#ff0055; padding:8px 14px; border-radius:8px; font-weight:bold; border:none;">Remove</button>
+      <input type="text" id="overlayText" placeholder="Type text..." class="text-input-field">
+      <button onclick="spawnMovableText()" style="background:#00ffcc; color:black; padding:5px 14px; border-radius:8px; font-weight:bold;">Place</button>
+      <button onclick="burnLayerToImage('text')" style="background:#ffcc00; color:black; padding:5px 14px; border-radius:8px; font-weight:bold;">✔Save</button>
+      <button onclick="deleteLayer('text')" style="background:rgba(255,0,85,0.2); color:#ff0055; padding:5px 14px; border-radius:8px; font-weight:bold; border:none;">Remove</button>
     </div>
 
     <div id="pipPanel" class="sub-panel">
-      <label style="background:#27272a; padding:10px 14px; border-radius:8px; cursor:pointer; font-weight:bold;">🏞️
+      <label style="background:#27272a; padding:8px 14px; border-radius:8px; cursor:pointer; font-weight:bold;">🏞️
         <input type="file" accept="image/*" onchange="spawnMovablePip(event)" style="display:none;">
       </label>
       <button onclick="burnLayerToImage('pip')" style="background:#ffcc00; color:black; padding:8px 14px; border-radius:8px; font-weight:bold;">✔Save</button>
@@ -530,7 +530,7 @@ body {
 
     <div id="cropPanel" class="sub-panel">
       <span style="color:#a1a1aa; font-size:14px;">Drag corners directly to crop</span>
-      <button onclick="confirmCropBake()" style="background:#00ffcc; color:black; font-weight:bold; border-radius:8px; padding:8px 16px; font-size:15px;">✔ Apply Crop</button>
+      <button onclick="confirmCropBake()" style="background:#00ffcc; color:black; font-weight:bold; border-radius:8px; padding:8px 16px; font-size:12px;">✔ Apply Crop</button>
     </div>
 
     <!-- Scrollable Tools List -->
