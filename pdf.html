@@ -733,7 +733,7 @@ function importImages(e) {
     images.push(url);
     imageSettings.push(getDefaultSetting());
   }
-  currentIndex = images.length - 1;
+  currentIndex = 0; // 👈 Yahan change kiya hai: Ab hamesha pehli image (Index 0) select hogi
   renderImages(currentIndex);
 }
 
