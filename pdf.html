@@ -417,6 +417,23 @@ body {
   padding: 0;
   z-index: 9999;
 }
+
+/* Selected Image par Touch Scroll Allow Karne Ke Liye Fix */
+.cropper-container, 
+.cropper-wrap-box, 
+.cropper-canvas {
+  touch-action: pan-x pan-y !important;
+}
+
+.cropper-drag-box {
+  pointer-events: none !important;
+}
+
+/* Jab Crop Mode ON ho tabhi Cropper drag accept kare */
+.crop-mode-active .cropper-drag-box {
+  pointer-events: auto !important;
+  touch-action: none !important;
+}
 </style>
 </head>
 <body>
@@ -696,11 +713,6 @@ function startNewProject() {
   renderImages();
 }
 
-function killCropper() {
-  if (cropper) { cropper.destroy(); cropper = null; }
-  document.querySelectorAll(".sub-panel").forEach(p => p.classList.remove("active"));
-}
-
 function hideMovableLayers() {
   const tLayer = document.getElementById("movableTextLayer");
   const pLayer = document.getElementById("movablePipLayer");
@@ -708,9 +720,31 @@ function hideMovableLayers() {
   if(pLayer) pLayer.classList.remove("active", "selected");
 }
 
+function triggerCropMode() {
+  if(!cropper) return;
+  switchSubPanel('cropPanel');
+  const wrapper = document.getElementById("workspaceWrapper");
+  if(wrapper) wrapper.classList.add("crop-mode-active");
+  cropper.crop();
+  cropper.setDragMode("crop");
+}
+
+function killCropper() {
+  if (cropper) { cropper.destroy(); cropper = null; }
+  const wrapper = document.getElementById("workspaceWrapper");
+  if(wrapper) wrapper.classList.remove("crop-mode-active");
+  document.querySelectorAll(".sub-panel").forEach(p => p.classList.remove("active"));
+}
+
 function switchSubPanel(id) {
   const target = document.getElementById(id);
   const isOpen = target.classList.contains("active");
+  
+  if (id !== 'cropPanel') {
+    const wrapper = document.getElementById("workspaceWrapper");
+    if(wrapper) wrapper.classList.remove("crop-mode-active");
+  }
+  
   document.querySelectorAll(".sub-panel").forEach(p => p.classList.remove("active"));
   if(!isOpen) target.classList.add("active");
 }
@@ -770,8 +804,31 @@ function saveCurrentLayersToSettings() {
       relY: layers.pip.relY,
       rotation: layers.pip.rotation,
       width: layers.pip.width,
-      height: layers.pip.height
+      height: layers.pip.height,
+      aspectRatio: layers.pip.aspectRatio || (layers.pip.width / layers.pip.height)
     };
+  }
+}
+
+function restoreLayersFromSettings(idx) {
+  hideMovableLayers();
+  if (idx < 0 || !imageSettings[idx]) return;
+
+  const set = imageSettings[idx];
+  if (set.textLayer && set.textLayer.active) {
+    layers.text = { ...set.textLayer };
+    document.getElementById("textValDisplay").innerText = set.textLayer.text;
+    applyLayerTransform('text');
+    document.getElementById("movableTextLayer").classList.add("active");
+    attachLayerDrag('text');
+  }
+
+  if (set.pipLayer && set.pipLayer.active) {
+    layers.pip = { ...set.pipLayer };
+    document.getElementById("pipImgDisplay").src = set.pipLayer.src;
+    applyLayerTransform('pip');
+    document.getElementById("movablePipLayer").classList.add("active");
+    attachLayerDrag('pip');
   }
 }
 
@@ -941,13 +998,6 @@ function rotateCoreImg() {
   renderImages(currentIndex);
 }
 
-function triggerCropMode() {
-  if(!cropper) return;
-  switchSubPanel('cropPanel');
-  cropper.crop();
-  cropper.setDragMode("crop");
-}
-
 function confirmCropBake() {
   if(!cropper) return;
   recordState();
@@ -1043,15 +1093,45 @@ function spawnMovablePip(e) {
   const file = e.target.files[0];
   if(!file || currentIndex < 0) return;
 
-  const pLayer = document.getElementById("movablePipLayer");
-  const imgEl = document.getElementById("pipImgDisplay");
-  imgEl.src = URL.createObjectURL(file);
-  layers.pip = { relX: 0.2, relY: 0.2, rotation: 0, width: 100, height: 100 };
-  applyLayerTransform('pip');
-  pLayer.classList.add("active");
-  selectLayer('pip');
-  attachLayerDrag('pip');
-  saveCurrentLayersToSettings();
+  const url = URL.createObjectURL(file);
+  const tempImg = new Image();
+  
+  tempImg.onload = () => {
+    const pLayer = document.getElementById("movablePipLayer");
+    const imgEl = document.getElementById("pipImgDisplay");
+    imgEl.src = url;
+
+    const naturalWidth = tempImg.naturalWidth || 100;
+    const naturalHeight = tempImg.naturalHeight || 100;
+    const ar = naturalWidth / naturalHeight;
+
+    let baseWidth, baseHeight;
+    // Lambi (Portrait) photo vs Chaudhi (Landscape) photo ke liye logic
+    if (ar < 1) {
+      baseHeight = 130;
+      baseWidth = Math.round(130 * ar);
+    } else {
+      baseWidth = 130;
+      baseHeight = Math.round(130 / ar);
+    }
+
+    layers.pip = { 
+      relX: 0.2, 
+      relY: 0.2, 
+      rotation: 0, 
+      width: baseWidth, 
+      height: baseHeight, 
+      aspectRatio: ar 
+    };
+
+    applyLayerTransform('pip');
+    pLayer.classList.add("active");
+    selectLayer('pip');
+    attachLayerDrag('pip');
+    saveCurrentLayersToSettings();
+  };
+  
+  tempImg.src = url;
 }
 
 function applyLayerTransform(type) {
@@ -1153,9 +1233,19 @@ function initTransform(e, type, action) {
       if(type === 'text') {
         layers.text.fontSize = Math.max(14, Math.round(dist / 2));
       } else {
-        const size = Math.max(40, Math.round(dist * 1.5));
-        layers.pip.width = size;
-        layers.pip.height = size;
+        // Fix: Aspect Ratio ke hisab se width aur height resize hogi
+        const ar = layers.pip.aspectRatio || (layers.pip.width / layers.pip.height) || 1;
+        const distSize = Math.max(30, Math.round(dist * 1.5));
+        
+        if (ar < 1) {
+          // Lambi/Portrait image ke liye height base calculation
+          layers.pip.height = distSize;
+          layers.pip.width = Math.round(distSize * ar);
+        } else {
+          // Chaudhi/Landscape image ke liye width base calculation
+          layers.pip.width = distSize;
+          layers.pip.height = Math.round(distSize / ar);
+        }
       }
     }
     applyLayerTransform(type);
@@ -1209,18 +1299,40 @@ function getCompositeImageUrl(idx, quality = 0.85) {
       const boxWidth = selectedBox ? selectedBox.getBoundingClientRect().width : 250;
       const boxHeight = selectedBox ? selectedBox.getBoundingClientRect().height : 310;
 
-      const scaleX = canvas.width / boxWidth;
-      const scaleY = canvas.height / boxHeight;
+      const imgAspect = canvas.width / canvas.height;
+      const boxAspect = boxWidth / boxHeight;
 
+      let renderedWidth, renderedHeight, offsetX, offsetY;
+      if (imgAspect > boxAspect) {
+        renderedWidth = boxWidth;
+        renderedHeight = boxWidth / imgAspect;
+        offsetX = 0;
+        offsetY = (boxHeight - renderedHeight) / 2;
+      } else {
+        renderedHeight = boxHeight;
+        renderedWidth = boxHeight * imgAspect;
+        offsetX = (boxWidth - renderedWidth) / 2;
+        offsetY = 0;
+      }
+
+      const scale = canvas.width / renderedWidth;
+
+      // 🔍 Fix: Movable layer offset (8px padding + 2px border = 10px)
+      const layerOffset = 10;
+
+      // Text Layer
       if (set.textLayer && set.textLayer.active && set.textLayer.text) {
         ctx.save();
-        const posX = set.textLayer.relX * canvas.width + (30 * scaleX);
-        const posY = set.textLayer.relY * canvas.height + (20 * scaleY);
+        const screenX = (set.textLayer.relX * boxWidth) + layerOffset;
+        const screenY = (set.textLayer.relY * boxHeight) + layerOffset;
 
-        ctx.translate(posX, posY);
+        const canvasX = (screenX - offsetX) * scale;
+        const canvasY = (screenY - offsetY) * scale;
+
+        ctx.translate(canvasX, canvasY);
         ctx.rotate((set.textLayer.rotation * Math.PI) / 180);
 
-        const fontResized = Math.floor(set.textLayer.fontSize * scaleX);
+        const fontResized = Math.floor(set.textLayer.fontSize * scale);
         ctx.font = `bold ${fontResized}px Arial`;
         ctx.textAlign = "left";
         ctx.textBaseline = "top";
@@ -1232,17 +1344,25 @@ function getCompositeImageUrl(idx, quality = 0.85) {
         ctx.restore();
       }
 
+      // PIP Layer
       if (set.pipLayer && set.pipLayer.active && set.pipLayer.src) {
         const pImg = new Image();
         pImg.crossOrigin = "Anonymous";
         pImg.onload = () => {
           ctx.save();
-          const posX = set.pipLayer.relX * canvas.width + ((set.pipLayer.width/2) * scaleX);
-          const posY = set.pipLayer.relY * canvas.height + ((set.pipLayer.height/2) * scaleY);
-          ctx.translate(posX, posY);
+          // 🔍 Fix: Screen offset ko add kiya takia exact pixel position match ho
+          const screenCenterX = (set.pipLayer.relX * boxWidth) + layerOffset + (set.pipLayer.width / 2);
+          const screenCenterY = (set.pipLayer.relY * boxHeight) + layerOffset + (set.pipLayer.height / 2);
+
+          const canvasX = (screenCenterX - offsetX) * scale;
+          const canvasY = (screenCenterY - offsetY) * scale;
+
+          ctx.translate(canvasX, canvasY);
           ctx.rotate((set.pipLayer.rotation * Math.PI) / 180);
-          const tw = set.pipLayer.width * scaleX;
-          const th = set.pipLayer.height * scaleY;
+
+          const tw = set.pipLayer.width * scale;
+          const th = set.pipLayer.height * scale;
+
           ctx.drawImage(pImg, -tw / 2, -th / 2, tw, th);
           ctx.restore();
           resolve(canvas.toDataURL("image/jpeg", quality));
